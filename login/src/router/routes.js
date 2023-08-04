@@ -4,9 +4,11 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'atualizar-cadastro', component: () => import('pages/paginaCadastro.vue') },
+      { path: 'login', component: () => import('pages/login.vue') },
+      { path: 'cadastro', component: () => import('pages/paginaCadastro.vue') },
     ]
   },
+
   // Always leave this as last one,
   // but you can also remove it
   {

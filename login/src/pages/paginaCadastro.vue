@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import usuarioService from 'src/services/atualizarCadastroService'
+import usuarioService from 'src/services/usuarioService'
 
 const usuarioServi = usuarioService()
 
@@ -34,7 +34,6 @@ const usuario = ref({
   senha: '',
   senha2: ''
 })
-
 
 const submeteFormulario = () => {
   console.log(usuario.value)
