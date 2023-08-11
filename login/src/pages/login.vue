@@ -4,15 +4,16 @@
   <div class="container">
 
     <q-card style="height: 600px; width: 470px;">
-      <q-card-section>
+      <q-card-section class="q-pb-none">
         <div class="column" id="titulo">
-            <div><h4>LOGIN</h4></div>
-            <div>Não tem cadastro? Clique aqui!</div>
+            <div id="login"><h4 class="q-mb-md">LOGIN</h4></div>
+            <div>Não tem cadastro? <span class="btnCadastro">Clique Aqui</span>
+            </div>
         </div>
       </q-card-section>
       <q-form @submit="logarConta()">
         <div class="column" id="input">
-          <q-input dense  style="width: 250px ;" v-model="usuario.email" class="q-mx-sm q-mb-sm" label="E-mail" outlined>
+          <q-input dense  style="width: 250px ;" v-model="usuario.id" class="q-mx-sm q-mb-sm" label="ID" outlined>
             <template v-slot:prepend>
               <q-icon name="person" />
             </template>
@@ -27,7 +28,7 @@
             </template>
           </q-input>
           <q-btn style="width: 250px ;" class="q-ma-xs" label="LOGIN" color="blue-4" type="submit"></q-btn>
-          <div>Esqueceu sua senha?</div>
+          <div> <span class="btnCadastro" v-on:click="btnSolicitaToken">Esqueceu sua senha?</span></div>
        </div>
       </q-form>
     </q-card>
@@ -50,6 +51,23 @@ const usuario = ref({
   email: '',
   senha:''
 })
+
+const btnSolicitaToken = async () =>{
+
+  if(usuario.value.id === null || usuario.value.id === ''){
+    $q.notify({message: 'Informe o ID' , color: 'negative'})
+  }else{
+    const retorno = await usuServi.enviaEmail(usuario.value).then(response =>{
+    if (!response.sucesso){
+      $q.notify({message: response.mensagem , color: 'negative'})
+    }
+    else{
+      $q.notify({message: response.mensagem , color: 'positive'})
+    }
+  })
+  }
+
+}
 
 const logarConta = () => {
   usuServi.efetuarLogin(usuario.value)
@@ -79,4 +97,8 @@ const logarConta = () => {
 #input{
   align-items: center;
 }
+.btnCadastro{
+  cursor: pointer;
+}
+
 </style>
