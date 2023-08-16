@@ -1,15 +1,45 @@
 <template>
   <q-page>
+
   <div class="row q-pa-md q-ma-md justify-center">
     <q-card class="col-6 ">
       <div >
       <q-form @submit="submeteFormulario" @reset="limparCadastro">
         <div class="text-h6 q-pt-md q-px-md text-center"> Atualização de casdastro </div>
-        <q-input class="q-ma-md" label="ID" col-12 v-model="usuario.id"></q-input>
-        <q-input class="q-ma-md" label="NOME" col-6 v-model="usuario.nome"></q-input>
+        <q-input
+          dense
+          outlined
+          class="q-ma-md"
+          label="ID"
+          col-12
+          v-model="usuario.id"
+         ></q-input>
+
+        <q-input
+          dense
+          outlined
+          class="q-ma-md"
+          label="NOME"
+          col-6
+          v-model="usuario.name"
+         ></q-input>
         <div class="row">
-          <q-input class="q-pa-md col-6" label="NOVA SENHA" v-model="usuario.senha"></q-input>
-          <q-input class="q-pa-md col-6" label="CONFIRMAR NOVA SENHA" v-model="usuario.senha2"></q-input>
+
+          <q-input
+            v-model.trim="usuario.password"
+            outlined
+            class="q-pa-md col-6"
+            label="NOVA SENHA"
+            dense >
+          </q-input>
+
+          <q-input
+            dense
+            outlined
+            class="q-pa-md col-6"
+            label="CONFIRMAR NOVA SENHA"
+            v-model.trim="usuario.password2">
+           </q-input>
         </div>
         <div>
           <q-btn class="q-ma-sm" label="Cadastrar" type="submit"></q-btn>
@@ -23,32 +53,50 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import  useVuelidate  from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
 import usuarioService from 'src/services/usuarioService'
 
 const usuarioServi = usuarioService()
 
-const usuario = ref({
+const usuario = reactive({
   id: '',
-  nome: '',
-  senha: '',
-  senha2: ''
+  name: '',
+  password: '',
+  password2: ''
 })
 
-const submeteFormulario = () => {
-  console.log(usuario.value)
-  usuarioServi.atualizaCadastro(usuario.value)
-    .then(response => {
-      if (response.sucesso) {
-        console.log("Atualização bem-sucedida.");
-      } else {
-        console.log("Erro: " + response.mensagem);
-      }
-    })
-    .catch(error => {
-      console.log("Erro na requisição: " + error.mensagem);
-    });
-};
+const rules = {
+  id: {required},
+  name: {required},
+  password: {},
+  password2: {required},
+  contemMaiusculas: function(password) {
+      return /[A-Z]/.test(password)
+    },
+    contemMinusculas: function(password) {
+      return /[a-z]/.test(password)
+    },
+    contemNumeros: function(password) {
+      return /[0-9]/.test(password)
+    },
+    contemEspeciais: function(password) {
+      return /[#?!@$%^&*-]/.test(password)
+    }
+}
+
+const v$ = useVuelidate(rules, usuario);
+
+const submeteFormulario = async () =>{
+  console.log(v$.contemEspeciais)
+    if (v$.contemEspeciais){
+    alert("A senha deve conter pelo menos um caractere especial.");
+  } else {
+    alert("Sucesso");
+  }
+
+}
 
 const limparCadastro = ()=>{
   usuario.value.id = '',
