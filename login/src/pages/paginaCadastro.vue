@@ -19,14 +19,14 @@
           dense
           outlined
           class="q-ma-md"
-          label="NOME"
+          label="nome"
           col-6
-          v-model="usuario.name"
+          v-model="usuario.nome"
          ></q-input>
         <div class="row">
 
           <q-input
-            v-model.trim="usuario.password"
+            v-model.trim="usuario.senha"
             outlined
             class="q-pa-md col-6"
             label="NOVA SENHA"
@@ -38,7 +38,7 @@
             outlined
             class="q-pa-md col-6"
             label="CONFIRMAR NOVA SENHA"
-            v-model.trim="usuario.password2">
+            v-model.trim="usuario.senha2">
            </q-input>
         </div>
         <div>
@@ -53,56 +53,77 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import  useVuelidate  from '@vuelidate/core'
-import { required, email } from '@vuelidate/validators'
-import usuarioService from 'src/services/usuarioService'
+import { ref} from 'vue'
+import userService from 'src/services/userService'
+import { useQuasar } from 'quasar'
 
-const usuarioServi = usuarioService()
+const userServi = userService()
+const $q = useQuasar();
 
-const usuario = reactive({
+const usuario = ref({
   id: '',
-  name: '',
-  password: '',
-  password2: ''
+  nome: '',
+  senha: '',
+  senha2: ''
 })
 
-const rules = {
-  id: {required},
-  name: {required},
-  password: {},
-  password2: {required},
-  contemMaiusculas: function(password) {
-      return /[A-Z]/.test(password)
-    },
-    contemMinusculas: function(password) {
-      return /[a-z]/.test(password)
-    },
-    contemNumeros: function(password) {
-      return /[0-9]/.test(password)
-    },
-    contemEspeciais: function(password) {
-      return /[#?!@$%^&*-]/.test(password)
+  const contemMaiusculas = (value) => {
+      return /[A-Z]/.test(value)
+    }
+
+  const contemMinusculas = (value) => {
+      return /[a-z]/.test(value)
+    }
+
+  const contemNumeros = (value) => {
+      return /[0-9]/.test(value)
+    }
+
+  const contemEspeciais = (value) => {
+      return /[#?!@$%^&*-]/.test(value)
+    }
+
+const submeteFormulario = async () =>{
+
+    if (usuario.value.senha === usuario.value.senha2){
+
+      const reMaiusculas = contemMaiusculas(usuario.value.senha)
+      if (!reMaiusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra maiúscula', icon:'warning', color: 'deep-orange'})
+
+      const reMinusculas = contemMinusculas(usuario.value.senha)
+      if (!reMinusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra minúscula', icon:'warning', color: 'deep-orange'})
+
+      const reNumereos = contemNumeros(usuario.value.senha)
+      if (!reNumereos)
+      $q.notify({ message: 'É necessário no mínimo 1 número', icon:'warning', color: 'deep-orange'})
+
+      const reEspeciais = contemEspeciais(usuario.value.senha)
+      if (!reEspeciais)
+      $q.notify({ message: 'É necessário no mínimo 1 caractere especial', icon:'warning', color: 'deep-orange'})
+
+      if(reMaiusculas && reMinusculas && reNumereos && reEspeciais){
+        await userServi.cadastrarUsuario(usuario.value)
+        .then(response =>{
+          if(response.sucesso){
+            $q.notify({message: response.mensagem, icon:'done', color: 'positive'})
+          }else{
+            $q.notify({message: response.mensagem, icon:'error', color: 'negative'})
+          }
+        })
+      }
+    }
+    else{
+      $q.notify({message: 'As senhas não conferem', icon:'done', color: 'negative'})
     }
 }
 
-const v$ = useVuelidate(rules, usuario);
-
-const submeteFormulario = async () =>{
-  console.log(v$.contemEspeciais)
-    if (v$.contemEspeciais){
-    alert("A senha deve conter pelo menos um caractere especial.");
-  } else {
-    alert("Sucesso");
-  }
-
-}
-
 const limparCadastro = ()=>{
-  usuario.value.id = '',
-  usuario.value.nome ='',
-  usuario.value.novaSenha = '',
-  usuario.value.confiNovaSenha = ''
+  usuariovalue.id = '',
+  usuariovalue.nome ='',
+  usuariovalue.novaSenha = '',
+  usuariovalue.confiNovaSenha = ''
   console.log("Opa")
 }
 
