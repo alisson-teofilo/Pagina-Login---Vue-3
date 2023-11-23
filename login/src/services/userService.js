@@ -5,12 +5,14 @@ export default function usuarioService () {
   const { efetuarLogin } = useApiUsuario('login')
   const { enviaEmail } = useApiUsuario('enviaEmail')
   const { cadastrarUsuario } = useApiUsuario('cadastrarUsuario')
+  const { listaUsurios } = useApiUsuario('listaUsuarios')
 
   return {
     atualizaCadastro,
     efetuarLogin,
     enviaEmail,
-    cadastrarUsuario
+    cadastrarUsuario,
+    listaUsurios
   };
 }
 

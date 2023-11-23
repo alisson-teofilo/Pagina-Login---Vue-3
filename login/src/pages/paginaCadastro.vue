@@ -104,14 +104,11 @@ const submeteFormulario = async () =>{
       $q.notify({ message: 'É necessário no mínimo 1 caractere especial', icon:'warning', color: 'deep-orange'})
 
       if(reMaiusculas && reMinusculas && reNumereos && reEspeciais){
-        await userServi.cadastrarUsuario(usuario.value)
-        .then(response =>{
-          if(response.sucesso){
-            $q.notify({message: response.mensagem, icon:'done', color: 'positive'})
-          }else{
-            $q.notify({message: response.mensagem, icon:'error', color: 'negative'})
-          }
-        })
+        
+        $q.notify.show({dealay: 40})
+        const response = await userServi.cadastrarUsuario(usuario.value)
+        $q.notify.hide()
+       
       }
     }
     else{
@@ -124,7 +121,6 @@ const limparCadastro = ()=>{
   usuariovalue.nome ='',
   usuariovalue.novaSenha = '',
   usuariovalue.confiNovaSenha = ''
-  console.log("Opa")
 }
 
 </script>

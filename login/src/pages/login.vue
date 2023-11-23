@@ -69,13 +69,13 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import usuarioService from 'src/services/usuarioService'
+import userService from 'src/services/userService'
 import { useQuasar } from 'quasar'
 
 
 const popUpcadastro = ref(false)
 const $q = useQuasar()
-const usuServi = usuarioService()
+const usuServi = userService()
 const isPwd = ref(true)
 
 
@@ -87,6 +87,21 @@ const usuario = ref({
   senha2: ''
 })
 
+  // Função para tratar erros
+  const trataErro = (error) => {
+      console.error(error.response); 
+
+        if (error.response && error.response.data) {
+
+          const errorMessage = error.response.data || "Erro na solicitação.";
+          $q.notify({ message: errorMessage, color: "negative" });
+
+        } else {
+          $q.notify({ message: "Erro na solicitação.", color: "negative" });
+        }
+    };
+
+    
   const btnCadastro = () => {
     popUpcadastro.value = true
 
@@ -108,17 +123,21 @@ const btnSolicitaToken = async () =>{
 
 }
 
-const logarConta = () => {
-  usuServi.efetuarLogin(usuario.value)
-    .then(response => {
-      if (response.sucesso){
-        $q.notify({message: response.mensagem , color: 'positive'})
+  const logarConta = async () => {
 
-      }else{
-        $q.notify({message: response.mensagem , color: 'negative'})
-      }
-    })
-}
+    try {
+
+     const response = await usuServi.efetuarLogin(usuario.value)
+
+     if(trataErro(response)){
+      return
+     }
+
+    } catch (error) {
+     
+    }
+    
+  }
 
 const btnCadastraUsuario = async () => {
   console.log(usuario.value)
