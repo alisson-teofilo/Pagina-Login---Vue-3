@@ -39,20 +39,24 @@ export default function useApiUsuario(url) {
   };
 
   const efetuarLogin = async (form) => {
+
     try {
       const { data } = await api.post(url,form);
       return data
     } catch (error) {
       return error
     }
+
   };
 
   return {
+
     atualizaCadastro,
     efetuarLogin,
     enviaEmail,
     cadastrarUsuario,
     listaUsurios
+
   };
 
 }
