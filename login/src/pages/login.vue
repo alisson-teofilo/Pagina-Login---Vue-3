@@ -4,68 +4,93 @@
     <div class="container">
 
       <q-card style="height: 600px; width: 470px;">
-        <q-card-section class="q-pb-none">
-          <div class="column" id="titulo">
-            <div id="login">
-              <h4 class="q-mb-md">LOGIN</h4>
-            </div>
-            <div>Não tem cadastro? <span class="btnCadastro" v-on:click="btnCadastro">Clique Aqui</span>
-            </div>
-          </div>
-        </q-card-section>
-        <q-form @submit="logarConta()">
-          <div class="column" id="input">
-            <q-input dense style="width: 250px ;" v-model="usuario.id" class="q-mx-sm q-mb-sm" label="ID" outlined>
-              <template v-slot:prepend>
-                <q-icon name="person" />
-              </template>
-            </q-input>
 
-            <q-input filled :type="isPwd ? 'password' : 'text'" dense style="width: 250px ;" v-model="usuario.senha"
-              class="" label="Senha" outlined>
-              <template v-slot:prepend>
-                <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
-              </template>
-            </q-input>
-            <q-btn style="width: 250px ;" class="q-ma-xs" label="LOGIN" color="blue-4" type="submit"></q-btn>
-            <div> <span class="btnCadastro" v-on:click="btnSolicitaToken">Esqueceu sua senha?</span></div>
+        <div v-if="!ehCadastroUsuario">
+          <q-card-section class="q-pb-none">
+
+            <div class="column" id="titulo">
+              <div id="login">
+                <h4 class="q-mb-md">LOGIN</h4>
+              </div>
+              <div>Não tem cadastro? <span class="btnCadastro" v-on:click="btnCadastro">Clique Aqui</span>
+              </div>
+            </div>
+
+          </q-card-section>
+          <div>
+            <q-form @submit="logarConta()">
+              <div class="column" id="input">
+                <q-input dense style="width: 250px ;" v-model="usuario.id" class="q-mx-sm q-mb-sm" label="ID" outlined>
+                  <template v-slot:prepend>
+                    <q-icon name="person" />
+                  </template>
+                </q-input>
+
+                <q-input filled :type="isPwd ? 'password' : 'text'" dense style="width: 250px ;" v-model="usuario.senha"
+                  class="" label="Senha" outlined>
+                  <template v-slot:prepend>
+                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                      @click="isPwd = !isPwd" />
+                  </template>
+                </q-input>
+                <q-btn style="width: 250px ;" class="q-ma-xs" label="LOGIN" color="blue-4" type="submit"></q-btn>
+                <div> <span class="btnCadastro" v-on:click="btnSolicitaToken">Esqueceu sua senha?</span></div>
+              </div>
+            </q-form>
           </div>
-        </q-form>
+        </div>
+
+        <!-- CADASTRO USUÁRIO -->
+        <div v-if="ehCadastroUsuario">
+          <div>
+
+            <q-card-section class="q-pb-none">
+
+              <div class="column" id="titulo">
+                <div id="login">
+                  <h6 class="q-mb-md">NOVO USUÁRIO</h6>
+                </div>
+              </div>
+
+            </q-card-section>
+
+            <q-form @submit="btnCadastraUsuario()" @reset="cancelarCadastro()">
+
+              <div class="row inputCadastro">
+
+                <div class="col-8">
+                  <q-input dense outlined class="q-mt-sm " label="ID" v-model="usuario.id"></q-input>
+                  <q-input dense outlined class="q-mt-sm " label="NOME" v-model="usuario.nome"></q-input>
+                  <q-input dense outlined class="q-pt-sm" label="EMAIL" v-model="usuario.email"></q-input>
+
+                  <div class="row">
+                    <div class="col-6">
+                      <q-input dense outlined class="q-mt-sm q-mr-sm" label="SENHA" v-model="usuario.senha"></q-input>
+                    </div>
+                    <div class="col-6">
+                      <q-input dense outlined class="q-mt-sm " label="CONFIRMAR SENHA" v-model="usuario.senha2"></q-input>
+                    </div>
+                  </div>
+
+                </div>
+
+                <q-separator style="width: 300px;" class="q-mb-md q-mt-md q-mx-xl" />
+
+                <div class="q-mt-xm row">
+
+                  <div class="col-12">
+                    <q-btn style="width: 210px;" color="blue" class="q-mr-sm" label="Cadastrar" type="submit"></q-btn>
+                    <q-btn color="orange" class="q-mr-sm" label="VOLTAR" type="reset"></q-btn>
+                  </div>
+
+                </div>  
+              </div>
+
+            </q-form>
+          </div>
+        </div>
       </q-card>
     </div>
-
-    <!-- Card popUp cadastro -->
-
-    <q-dialog persistent v-model="popUpcadastro">
-      <q-card style="height: 606px; width: 470px;">
-        <q-card-section class="q-mr-auto">
-          <q-btn label="x" type="reset" v-close-popup></q-btn>
-        </q-card-section>
-        <q-card-section class="q-pb-none">
-          <div class="text-h6 q-ml-xl">Cadastro de Usuário</div>
-        </q-card-section>
-
-        <q-separator class="q-mb-md q-mt-sm q-mx-xl" />
-
-        <q-form @submit="btnCadastraUsuario()" @reset="cancelarCadastro()">
-          <div class="row inputCadastro">
-            <q-input dense outlined class="q-mt-xm q-pl-xl q-pr-sm col-4" label="ID" v-model="usuario.id"></q-input>
-            <q-input dense outlined class=" q-mt-xm q-pr-xl col-8" label="NOME" v-model="usuario.nome"></q-input>
-            <q-input dense outlined class=" q-mt-sm q-pl-xl q-pr-sm col-6" label="SENHA"
-              v-model="usuario.senha"></q-input>
-            <q-input dense outlined class=" q-mt-sm q-pr-xl col-6" label="CONFIRMAR SENHA"
-              v-model="usuario.senha2"></q-input>
-          </div>
-
-
-          <q-separator class="q-my-md q-mx-xl" />
-          <div class="q-mx-xl row">
-            <q-btn color="blue" class="q-mr-sm col-12" label="Cadastrar" type="submit" v-close-popup></q-btn>
-          </div>
-        </q-form>
-      </q-card>
-
-    </q-dialog>
 
   </q-page>
 </template>
@@ -80,7 +105,7 @@ const popUpcadastro = ref(false)
 const $q = useQuasar()
 const usuServi = userService()
 const isPwd = ref(true)
-
+const ehCadastroUsuario = ref(false)
 
 const usuario = ref({
   id: '',
@@ -90,14 +115,29 @@ const usuario = ref({
   senha2: ''
 })
 
+const contemMaiusculas = (value) => {
+  return /[A-Z]/.test(value)
+}
+
+const contemMinusculas = (value) => {
+  return /[a-z]/.test(value)
+}
+
+const contemNumeros = (value) => {
+  return /[0-9]/.test(value)
+}
+
+const contemEspeciais = (value) => {
+  return /[#?!@$%^&*-]/.test(value)
+}
 // Função para tratar erros
 const trataErro = (error) => {
 
   if (error?.response?.data || error?.response) {
-    $q.notify({ 
+    $q.notify({
       message: error.response.data || 'erro na solicitação',
-       color: "negative" 
-      });
+      color: "negative"
+    });
 
     return true
   } else {
@@ -107,20 +147,23 @@ const trataErro = (error) => {
 };
 
 
+// Login
 const logarConta = async () => {
 
   try {
     const response = await usuServi.efetuarLogin(usuario.value)
+
     if (trataErro(response)) {
       return
     }
-  } catch (error) { 
+  } catch (error) {
     console.error(error)
   }
 
 }
 
 const btnCadastro = () => {
+  ehCadastroUsuario.value = true
   popUpcadastro.value = true
 
 }
@@ -128,34 +171,79 @@ const btnCadastro = () => {
 const btnSolicitaToken = async () => {
   if (usuario.value.id === null || usuario.value.id === '') {
     $q.notify({ message: 'Informe o ID', color: 'negative' })
+
   } else {
-    const retorno = await usuServi.enviaEmail(usuario.value).then(response => {
-      if (!response.sucesso) {
-        $q.notify({ message: response.mensagem, color: 'negative' })
-      }
-      else {
-        $q.notify({ message: response.mensagem, color: 'positive' })
-      }
-    })
+    const response = await usuServi.enviaEmail(usuario.value)
+
+    if (trataErro(response)) {
+      return
+    }
+
   }
 
 }
+
 const btnCadastraUsuario = async () => {
 
-  await usuServi.cadastrarUsuario(usuario.value)
-    .then(response => {
-      if (response.sucesso) {
-        console.log("Atualização bem-sucedida.");
-      } else {
-        console.log("Erro: " + response.mensagem);
-      }
-    })
-    .catch(error => {
-      console.log("Erro na requisição: " + error.mensagem);
-    });
+  try {
+    const response = await usuServi.cadastrarUsuario(usuario.value)
+
+    if (trataErro(response)) {
+      return
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+
 };
 
+// Cadastro
+
+const salvarCadastro = async () => {
+  novoUsuario.value = true
+
+  if (usuario.value.senha === usuario.value.senha2) {
+
+    const reMaiusculas = contemMaiusculas(usuario.value.senha)
+    if (!reMaiusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra maiúscula', icon: 'warning', color: 'deep-orange' })
+
+    const reMinusculas = contemMinusculas(usuario.value.senha)
+    if (!reMinusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra minúscula', icon: 'warning', color: 'deep-orange' })
+
+    const reNumereos = contemNumeros(usuario.value.senha)
+    if (!reNumereos)
+      $q.notify({ message: 'É necessário no mínimo 1 número', icon: 'warning', color: 'deep-orange' })
+
+    const reEspeciais = contemEspeciais(usuario.value.senha)
+    if (!reEspeciais)
+      $q.notify({ message: 'É necessário no mínimo 1 caractere especial', icon: 'warning', color: 'deep-orange' })
+
+    if (reMaiusculas && reMinusculas && reNumereos && reEspeciais) {
+
+      $q.notify.show({ dealay: 40 })
+      const response = await usuServi.cadastrarUsuario(usuario.value)
+      $q.notify.hide()
+
+      if (trataErro(response)) {
+        return
+      }
+
+      novoUsuario.value = false
+
+    }
+  }
+  else {
+    $q.notify({ message: 'As senhas não conferem', icon: 'done', color: 'negative' })
+  }
+}
+
+
+
 const cancelarCadastro = () => {
+  ehCadastroUsuario.value = false
   usuario.value.id = '',
     usuario.value.nome = '',
     usuario.value.senha = '',
@@ -163,6 +251,7 @@ const cancelarCadastro = () => {
 }
 
 </script>
+
 <style>
 .btnFooter {
 
@@ -209,4 +298,5 @@ const cancelarCadastro = () => {
 #backCard {
   display: flex;
   justify-content: center;
-}</style>
+}
+</style>
