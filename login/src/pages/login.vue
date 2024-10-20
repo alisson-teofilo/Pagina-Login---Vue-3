@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-layout>
 
     <div class="container">
 
@@ -92,7 +92,7 @@
       </q-card>
     </div>
 
-  </q-page>
+</q-layout>
 </template>
 
 <script setup>
@@ -100,12 +100,17 @@ import { ref } from 'vue'
 import userService from 'src/services/userService'
 import { useQuasar } from 'quasar'
 
+import axios from 'axios';
+
+
 
 const popUpcadastro = ref(false)
 const $q = useQuasar()
 const usuServi = userService()
 const isPwd = ref(true)
 const ehCadastroUsuario = ref(false)
+
+
 
 const usuario = ref({
   id: '',
@@ -130,16 +135,17 @@ const contemNumeros = (value) => {
 const contemEspeciais = (value) => {
   return /[#?!@$%^&*-]/.test(value)
 }
-// Função para tratar erros
-const trataErro = (error) => {
 
-  if (error?.response?.data || error?.response) {
+// Função para tratar erros 
+const trataErro = (erro) => {
+
+  if (axios.isAxiosError(erro)) {
     $q.notify({
-      message: error.response.data || 'erro na solicitação',
+      message: erro.response.data || 'erro na solicitação',
       color: "negative"
     });
-
     return true
+    
   } else {
     return false
   }
@@ -169,16 +175,21 @@ const btnCadastro = () => {
 }
 
 const btnSolicitaToken = async () => {
+
   if (usuario.value.id === null || usuario.value.id === '') {
     $q.notify({ message: 'Informe o ID', color: 'negative' })
 
   } else {
+
     const response = await usuServi.enviaEmail(usuario.value)
 
     if (trataErro(response)) {
-      return
+       return
+    } else{
+      $q.notify({message : response, color: 'positive'})
     }
 
+    clear()
   }
 
 }
@@ -248,6 +259,10 @@ const cancelarCadastro = () => {
     usuario.value.nome = '',
     usuario.value.senha = '',
     usuario.value.senha2
+}
+
+const clear = () => {
+  usuario.value.id = ''
 }
 
 </script>

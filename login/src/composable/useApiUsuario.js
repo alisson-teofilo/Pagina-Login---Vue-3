@@ -3,15 +3,48 @@ import { api } from 'src/boot/axios';
 
 export default function useApiUsuario(url) {
 
-  const listaUsurios = async () => {
+  const exemplo = async () => { 
+    const errors = [];
+    let body = {};
+
     try {
-      const result = await api.get(`${url}`);
+
+      const response = await api.get(url, {
+      headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+      withCredentials: false,
+      timeout: 10000,
+        }
+      });
+      body = response.data;
+      return body;
+
     } catch (error) {
-      throw new Error(error);
+      errors.values = error;
+      return errors;
+    }
+  };
+
+  const listaUsurios = async () => { 
+    const errors = [];
+    let body = {};
+
+    try {
+      const response = await api.get(url, {
+        headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        withCredentials: false,
+        timeout: 10000,
+          }
+        });
+        body = response.data;
+        return body;
+    } catch (error) {
+      errors.values = error;
+      return errors;
     }
   };
 
   const cadastrarUsuario = async (form) => {
+
     try {
       const { data } = await api.post(url,form);
       return data
@@ -21,17 +54,21 @@ export default function useApiUsuario(url) {
   };
 
   const enviaEmail = async (form) => {
+
     try {
       const { data } = await api.post(url,form);
       return data
     } catch (error) {
-      throw new Error(error);
+      return error
     }
   };
 
   const atualizaCadastro = async (form) => {
+
     try {
-      const { data } = await api.post(url,form);
+      const { data } = await api.post(url,form, {
+        local
+      });
       return data
     } catch (error) {
       throw new Error(error);
