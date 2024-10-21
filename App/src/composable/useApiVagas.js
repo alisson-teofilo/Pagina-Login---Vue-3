@@ -24,7 +24,7 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const listaUsurios = async () => { 
+  const listarVagas = async () => { 
     const errors = [];
     let body = {};
 
@@ -43,7 +43,7 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const cadastrarUsuario = async (form) => {
+  const buscarVagas = async (form) => {
 
     try {
       const { data } = await api.post(url,form);
@@ -53,17 +53,7 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const enviaEmail = async (form) => {
-
-    try {
-      const { data } = await api.post(url,form);
-      return data
-    } catch (error) {
-      return error
-    }
-  };
-
-  const atualizaCadastro = async (form) => {
+  const cadastrarVagas = async (form) => {
 
     try {
       const { data } = await api.post(url,form, {
@@ -75,36 +65,27 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const efetuarLogin = async (form) => {
+  const editarVagas = async (form) => {
 
     try {
-      const { data } = await api.post(url,form);
+      const { data } = await api.put(url,form, {
+        local
+      });
       return data
     } catch (error) {
-      return error
+      throw new Error(error);
     }
-
   };
 
-  const buscarUsuarios = async (form) => {
 
-    try {
-      const { data } = await api.post(url,form);
-      return data
-    } catch (error) {
-      return error
-    }
 
-  };
 
   return {
 
-    atualizaCadastro,
-    efetuarLogin,
-    enviaEmail,
-    cadastrarUsuario,
-    listaUsurios,
-    buscarUsuarios
+    listarVagas,
+    buscarVagas,
+    cadastrarVagas,
+    editarVagas
 
   };
 

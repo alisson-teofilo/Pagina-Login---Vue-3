@@ -99,18 +99,16 @@
 import { ref } from 'vue'
 import userService from 'src/services/userService'
 import { useQuasar } from 'quasar'
-
+import { useRouter } from 'vue-router'
 import axios from 'axios';
 
 
-
+const router = useRouter();
 const popUpcadastro = ref(false)
-const $q = useQuasar()
+const $q = useQuasar() 
 const usuServi = userService()
 const isPwd = ref(true)
 const ehCadastroUsuario = ref(false)
-
-
 
 const usuario = ref({
   id: '',
@@ -137,11 +135,13 @@ const contemEspeciais = (value) => {
 }
 
 // Função para tratar erros 
-const trataErro = (erro) => {
+const trataErro = (response) => {
 
-  if (axios.isAxiosError(erro)) {
+  console.log(response)
+
+  if (typeof response === 'object' && axios.isAxiosError(response)) {
     $q.notify({
-      message: erro.response.data || 'erro na solicitação',
+      message: response.response.data || 'erro na solicitação',
       color: "negative"
     });
     return true
@@ -152,7 +152,6 @@ const trataErro = (erro) => {
 
 };
 
-
 // Login
 const logarConta = async () => {
 
@@ -162,6 +161,9 @@ const logarConta = async () => {
     if (trataErro(response)) {
       return
     }
+
+    router.push({ path: '/home' });
+
   } catch (error) {
     console.error(error)
   }
