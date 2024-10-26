@@ -1,7 +1,7 @@
 
 import { api } from 'src/boot/axios';
 
-export default function useApiUsuario(url) {
+export default function useApiVagas(url) {
 
   const exemplo = async () => { 
     const errors = [];
@@ -43,10 +43,10 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const buscarVagas = async (form) => {
+  const buscarVagas = async (descricao) => {
 
     try {
-      const { data } = await api.post(url,form);
+      const { data } = await api.get(`${url}/${descricao}`);
       return data
     } catch (error) {
       return error
