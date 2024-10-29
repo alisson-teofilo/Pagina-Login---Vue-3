@@ -2,7 +2,7 @@
   "name": "login",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Quasar App",
+  "productName": "Linke Vagas",
   "author": "Alisson <alissonteofilo@gmail.com>",
   "private": true,
   "scripts": {

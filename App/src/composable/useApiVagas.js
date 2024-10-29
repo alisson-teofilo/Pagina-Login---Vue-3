@@ -43,10 +43,10 @@ export default function useApiVagas(url) {
     }
   };
 
-  const buscarVagas = async (descricao) => {
+  const buscarVagas = async (form) => {
 
     try {
-      const { data } = await api.get(`${url}/${descricao}`);
+      const { data } = await api.post(url, form);
       return data
     } catch (error) {
       return error
