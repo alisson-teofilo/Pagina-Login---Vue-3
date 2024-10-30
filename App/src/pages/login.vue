@@ -18,7 +18,7 @@
 
           </q-card-section>
           <div>
-            <q-form @submit="logarConta()">
+            <q-form @submit.prevent="logarConta()">
               <div class="column" id="input">
                 <q-input dense style="width: 250px ;" v-model="usuario.id" class="q-mx-sm q-mb-sm" label="ID" outlined>
                   <template v-slot:prepend>
@@ -162,6 +162,7 @@ const logarConta = async () => {
       return
     }
 
+    localStorage.setItem('loginId', usuario.value.id.toString())
     router.push({ path: '/home' });
 
   } catch (error) {
@@ -187,10 +188,9 @@ const btnSolicitaToken = async () => {
 
     if (trataErro(response)) {
        return
-    } else{
-      $q.notify({message : response, color: 'positive'})
     }
-
+    $q.notify({message : response, color: 'positive'})
+    
     clear()
   }
 

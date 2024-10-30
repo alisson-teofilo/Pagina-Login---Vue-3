@@ -43,6 +43,16 @@ export default function useApiUsuario(url) {
     }
   };
 
+  const candidatarVaga = async (form) => {
+
+    try {
+      const { data } = await api.post(url,form);
+      return data
+    } catch (error) {
+      return error
+    }
+  };
+
   const cadastrarUsuario = async (form) => {
 
     try {
@@ -63,12 +73,10 @@ export default function useApiUsuario(url) {
     }
   };
 
-  const atualizaCadastro = async (form) => {
+  const atualizarCadastro = async (form) => {
 
     try {
-      const { data } = await api.post(url,form, {
-        local
-      });
+      const { data } = await api.put(url,form);
       return data
     } catch (error) {
       throw new Error(error);
@@ -86,10 +94,21 @@ export default function useApiUsuario(url) {
 
   };
 
-  const buscarUsuarios = async (form) => {
+  const buscarUsuarioPF = async (id) => {
 
     try {
-      const { data } = await api.post(url,form);
+      const { data } = await api.get(`${url}/${id}`);
+      return data
+    } catch (error) {
+      return error
+    }
+
+  };
+
+  const buscarUsuarioPJ = async (cnpj) => {
+
+    try {
+      const { data } = await api.get(`${url}/${cnpj}`);
       return data
     } catch (error) {
       return error
@@ -99,12 +118,14 @@ export default function useApiUsuario(url) {
 
   return {
 
-    atualizaCadastro,
+    atualizarCadastro,
     efetuarLogin,
     enviaEmail,
+    candidatarVaga,
     cadastrarUsuario,
     listaUsurios,
-    buscarUsuarios
+    buscarUsuarioPF,
+    buscarUsuarioPJ
 
   };
 

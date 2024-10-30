@@ -23,6 +23,25 @@ export default function useApiVagas(url) {
       return errors;
     }
   };
+  
+  const listarCandidaturasByUsuaio = async (cpf) => { 
+    const errors = [];
+    let body = {};
+
+    try {
+      const response = await api.get(`${url}/${cpf}`, {
+        headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        withCredentials: false,
+        timeout: 10000,
+          }
+        });
+        body = response.data;
+        return body;
+    } catch (error) {
+      errors.values = error;
+      return errors;
+    }
+  };
 
   const listarVagas = async () => { 
     const errors = [];
@@ -64,7 +83,7 @@ export default function useApiVagas(url) {
       throw new Error(error);
     }
   };
-
+  
   const editarVagas = async (form) => {
 
     try {
@@ -77,7 +96,15 @@ export default function useApiVagas(url) {
     }
   };
 
+  const deletarCandidatura = async (form) => {
 
+    try {
+      const { data } = await api.post(url, form);
+      return data
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
 
 
   return {
@@ -85,7 +112,9 @@ export default function useApiVagas(url) {
     listarVagas,
     buscarVagas,
     cadastrarVagas,
-    editarVagas
+    editarVagas,
+    listarCandidaturasByUsuaio,
+    deletarCandidatura
 
   };
 

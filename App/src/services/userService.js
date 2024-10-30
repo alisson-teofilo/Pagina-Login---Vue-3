@@ -2,20 +2,25 @@ import useApiUsuario from 'src/composable/useApiUsuario'
 
 export default function usuarioService () {
   
-  const { atualizaCadastro } = useApiUsuario('atualizaCadastro')
+  const { atualizarCadastro } = useApiUsuario('usuarioPF/atualizarCadastro')
   const { efetuarLogin } = useApiUsuario('login/efetuarLogin')
-  const { enviaEmail } = useApiUsuario('enviaEmail')
-  const { cadastrarUsuario } = useApiUsuario('cadastrarUsuario')
-  const { listaUsurios } = useApiUsuario('listaUsuarios')
-  const { buscarUsuarios } = useApiUsuario('buscarUsuarios')
+  const { enviaEmail } = useApiUsuario('eusuarioPF/nviaEmail')
+  const { cadastrarUsuario } = useApiUsuario('usuarioPF/cadastrarUsuario')
+  const { candidatarVaga } = useApiUsuario('vagas/candidatarVaga')
+  const { listaUsurios } = useApiUsuario('usuarioPF/listaUsuarios')
+  const { buscarUsuarioPF } = useApiUsuario('usuarioPF/buscarUsuario')
+  const { buscarUsuarioPJ } = useApiUsuario('usuarioPJ/buscarUsuario')
+  
 
   return {
-    atualizaCadastro,
+    atualizarCadastro,
     efetuarLogin,
     enviaEmail,
     cadastrarUsuario,
+    candidatarVaga,
     listaUsurios,
-    buscarUsuarios
+    buscarUsuarioPF,
+    buscarUsuarioPJ,
   };
 }
 
