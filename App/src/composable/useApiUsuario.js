@@ -43,6 +43,44 @@ export default function useApiUsuario(url) {
     }
   };
 
+  const recuperarSenhaUsuario = async (form) => { 
+    const errors = [];
+    let body = {};
+
+    try {
+      const response = await api.post(url, form, {
+        headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        withCredentials: false,
+        timeout: 10000,
+          }
+        });
+        body = response.data;
+        return body;
+    } catch (error) {
+      errors.values = error;
+      return errors;
+    }
+  };
+
+  const recuperarSenhaEmpresa = async (form) => { 
+    const errors = [];
+    let body = {};
+
+    try {
+      const response = await api.post(url, form, {
+        headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        withCredentials: false,
+        timeout: 10000,
+          }
+        });
+        body = response.data;
+        return body;
+    } catch (error) {
+      errors.values = error;
+      return errors;
+    }
+  };
+
   const candidatarVaga = async (form) => {
 
     try {
@@ -64,6 +102,16 @@ export default function useApiUsuario(url) {
   };
 
   const enviaEmail = async (form) => {
+
+    try {
+      const { data } = await api.post(url,form);
+      return data
+    } catch (error) {
+      return error
+    }
+  };
+
+  const validarToken = async (form) => {
 
     try {
       const { data } = await api.post(url,form);
@@ -131,12 +179,15 @@ export default function useApiUsuario(url) {
     atualizarCadastro,
     efetuarLogin,
     enviaEmail,
+    validarToken,
     candidatarVaga,
     cadastrarUsuario,
     listaUsurios,
     buscarUsuaio,
     buscarEmpresa,
-    editarCadastroEmpresa
+    editarCadastroEmpresa,
+    recuperarSenhaUsuario,
+    recuperarSenhaEmpresa
 
   };
 

@@ -253,8 +253,6 @@ const salvarCadastro = async () => {
   }
 }
 
-
-
 const cancelarCadastro = () => {
   ehCadastroUsuario.value = false
   usuario.value.id = '',
