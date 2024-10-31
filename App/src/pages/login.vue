@@ -5,7 +5,7 @@
 
       <q-card style="height: 600px; width: 470px;">
 
-        <div v-if="!ehCadastroUsuario">
+        <div v-if="ehCadastroUsuario === ehCadastroEmpresa ? true : false">
           <q-card-section class="q-pb-none">
 
             <div class="column" id="titulo">
@@ -41,34 +41,47 @@
         </div>
 
         <!-- CADASTRO USUÁRIO -->
-        <div v-if="ehCadastroUsuario">
+        <div v-show="ehCadastroUsuario">
           <div>
 
             <q-card-section class="q-pb-none">
 
               <div class="column" id="titulo">
                 <div id="login">
-                  <h6 class="q-mb-md">NOVO USUÁRIO</h6>
+                  <h6 class="q-mb-md">CADASTRAR USUÁRIO</h6>
                 </div>
               </div>
 
             </q-card-section>
 
-            <q-form @submit="btnCadastraUsuario()" @reset="cancelarCadastro()">
+            <q-form @submit="salvarCadastroUsuario()" @reset="cancelarCadastroUsuario()">
 
               <div class="row inputCadastro">
 
                 <div class="col-8">
-                  <q-input dense outlined class="q-mt-sm " label="ID" v-model="usuario.id"></q-input>
                   <q-input dense outlined class="q-mt-sm " label="NOME" v-model="usuario.nome"></q-input>
                   <q-input dense outlined class="q-pt-sm" label="EMAIL" v-model="usuario.email"></q-input>
+                  <q-input dense outlined class="q-pt-sm" label="CARGO" v-model="usuario.cargoAtual"></q-input>
+                  <q-input dense outlined class="q-pt-sm" label="CPF" v-model="usuario.cpf"></q-input>
 
                   <div class="row">
                     <div class="col-6">
-                      <q-input dense outlined class="q-mt-sm q-mr-sm" label="SENHA" v-model="usuario.senha"></q-input>
+
+                      <q-input :type="isPwdUsu ? 'password' : 'text'" dense outlined class="q-mt-sm q-mr-sm" label="SENHA" v-model="usuario.senha" >
+                        <template v-slot:prepend>
+                          <q-icon :name="isPwdUsu ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                            @click="isPwdUsu = !isPwdUsu" />
+                        </template>
+                      </q-input>
+
                     </div>
                     <div class="col-6">
-                      <q-input dense outlined class="q-mt-sm " label="CONFIRMAR SENHA" v-model="usuario.senha2"></q-input>
+                      <q-input  :type="isPwd2Usu ? 'password' : 'text'" dense outlined class="q-mt-sm " label="CONFIRMAR SENHA" v-model="usuario.senha2">
+                        <template v-slot:prepend>
+                                <q-icon :name="isPwd2Usu ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                @click="isPwd2Usu = !isPwd2Usu" />
+                        </template>
+                      </q-input>
                     </div>
                   </div>
 
@@ -77,18 +90,82 @@
                 <q-separator style="width: 300px;" class="q-mb-md q-mt-md q-mx-xl" />
 
                 <div class="q-mt-xm row">
+                  <q-btn style="width: 210px;" color="blue" class="q-mr-sm" label="Cadastrar" type="submit"></q-btn>
+                  <q-btn color="orange" class="q-mr-sm" label="VOLTAR" type="reset"></q-btn>
+                </div>
 
-                  <div class="col-12">
-                    <q-btn style="width: 210px;" color="blue" class="q-mr-sm" label="Cadastrar" type="submit"></q-btn>
-                    <q-btn color="orange" class="q-mr-sm" label="VOLTAR" type="reset"></q-btn>
-                  </div>
+                <div class="q-mt-sm">
+                  <q-btn flat style="width: 300px;" color="secondary" class="q-mr-sm" label="Cadastrar empresa" @click="btnCadastrarEmpresa"></q-btn>
+                </div>
 
-                </div>  
               </div>
 
             </q-form>
           </div>
         </div>
+
+        <div v-show="ehCadastroEmpresa">
+          <div>
+
+            <q-card-section class="q-pb-none">
+
+              <div class="column" id="titulo">
+                <div id="login">
+                  <h6 class="q-mb-md">CADASTRAR EMPRESA</h6>
+                </div>
+              </div>
+
+            </q-card-section>
+
+            <q-form @submit="salvarCadastroEmpresa()" @reset="cancelarCadastroEmpresa()">
+
+              <div class="row inputCadastro">
+
+                <div class="col-8">
+
+                  <q-input dense outlined label="RAZÃO SOCIAL" :rules="[val => !!val || 'Informe a razão social']" lazy-rules="ondemand" v-model="empresa.razaoSocial"></q-input>
+                  <q-input dense outlined label="NOME FANTASIA" :rules="[val => !!val || 'Informe o nome fatasia']" lazy-rules="ondemand" v-model="empresa.nomeFantasia"></q-input>
+                  <q-input dense outlined label="EMAIL" :rules="[val => !!val || 'Informe o email']" lazy-rules="ondemand" v-model="empresa.email"></q-input>
+                  <q-input dense outlined label="CNPJ" :rules="[val => val.length > 13 || 'Informe um cnpj válido']" lazy-rules="ondemand" v-model="empresa.cnpj"></q-input>
+                  <q-input dense outlined label="SEGMENTO" :rules="[val => !!val || 'Informe o segmento']" lazy-rules="ondemand" v-model="empresa.segmento"></q-input>
+
+                  <div class="row">
+
+                    <div class="col-6">
+                      <q-input :type="isPwdEmp ? 'password' : 'text'" dense outlined class="q-mt-sm q-mr-sm" label="SENHA" v-model="empresa.senha" >
+                        <template v-slot:prepend>
+                                <q-icon :name="isPwdEmp ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                @click="isPwdEmp = !isPwdEmp" />
+                        </template>
+                      </q-input>
+                    </div>
+
+                    <div class="col-6">
+                      <q-input :type="isPwd2Emp ? 'password' : 'text'" dense outlined class="q-mt-sm " label="CONFIRMAR SENHA" v-model="empresa.senha2" >
+                        <template v-slot:prepend>
+                                <q-icon :name="isPwd2Emp ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                @click="isPwd2Emp = !isPwd2Emp" />
+                        </template>
+                      </q-input>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <q-separator style="width: 300px;" class="q-mb-md q-mt-md q-mx-xl" />
+
+                <div class="q-mt-xm row">
+                  <q-btn style="width: 210px;" color="blue" class="q-mr-sm" label="Cadastrar" type="submit"></q-btn>
+                  <q-btn color="orange" class="q-mr-sm" label="VOLTAR" type="reset"></q-btn>
+                </div>
+
+              </div>
+
+            </q-form>
+          </div>
+        </div>
+
       </q-card>
     </div>
 
@@ -102,18 +179,34 @@ import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import axios from 'axios';
 
-
 const router = useRouter();
 const popUpcadastro = ref(false)
 const $q = useQuasar() 
 const usuServi = userService()
 const isPwd = ref(true)
-const ehCadastroUsuario = ref(false)
+const isPwdUsu = ref(true)
+const isPwd2Usu = ref(true)
+const isPwdEmp = ref(true)
+const isPwd2Emp = ref(true)
+const ehCadastroUsuario = ref(false)    
+const ehCadastroEmpresa = ref(false)
 
 const usuario = ref({
   id: '',
   nome: '',
   email: '',
+  cargoAtual: '',
+  cpf: '',
+  senha: '',
+  senha2: ''
+})
+
+const empresa = ref({
+  razaoSocial: '',
+  nomeFantasia: '',
+  cnpj: '',
+  email: '',
+  segmento: '',
   senha: '',
   senha2: ''
 })
@@ -191,30 +284,13 @@ const btnSolicitaToken = async () => {
     }
     $q.notify({message : response, color: 'positive'})
     
-    clear()
+    limparID()
   }
 
 }
 
-const btnCadastraUsuario = async () => {
-
-  try {
-    const response = await usuServi.cadastrarUsuario(usuario.value)
-
-    if (trataErro(response)) {
-      return
-    }
-
-  } catch (error) {
-    console.log(error)
-  }
-
-};
-
 // Cadastro
-
-const salvarCadastro = async () => {
-  novoUsuario.value = true
+const salvarCadastroUsuario = async () => {
 
   if (usuario.value.senha === usuario.value.senha2) {
 
@@ -236,33 +312,106 @@ const salvarCadastro = async () => {
 
     if (reMaiusculas && reMinusculas && reNumereos && reEspeciais) {
 
-      $q.notify.show({ dealay: 40 })
       const response = await usuServi.cadastrarUsuario(usuario.value)
-      $q.notify.hide()
 
       if (trataErro(response)) {
         return
       }
 
-      novoUsuario.value = false
-
+      limparCadastroUsuario()
+      $q.notify({ message: response, icon: 'done', color: 'positive' })
+      fecharJanelasCadastro()
     }
+    return;
   }
-  else {
-    $q.notify({ message: 'As senhas não conferem', icon: 'done', color: 'negative' })
-  }
-}
+  
+  $q.notify({ message: 'As senhas não conferem', icon: 'error', color: 'negative' })
+  
+} 
 
-const cancelarCadastro = () => {
+const salvarCadastroEmpresa = async () => {
+
+  if (empresa.value.senha === empresa.value.senha2) {
+
+    const reMaiusculas = contemMaiusculas(empresa.value.senha)
+    if (!reMaiusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra maiúscula', icon: 'warning', color: 'deep-orange' })
+
+    const reMinusculas = contemMinusculas(empresa.value.senha)
+    if (!reMinusculas)
+      $q.notify({ message: 'É necessário no mínimo 1 letra minúscula', icon: 'warning', color: 'deep-orange' })
+
+    const reNumereos = contemNumeros(empresa.value.senha)
+    if (!reNumereos)
+      $q.notify({ message: 'É necessário no mínimo 1 número', icon: 'warning', color: 'deep-orange' })
+
+    const reEspeciais = contemEspeciais(empresa.value.senha)
+    if (!reEspeciais)
+      $q.notify({ message: 'É necessário no mínimo 1 caractere especial', icon: 'warning', color: 'deep-orange' })
+
+    if (reMaiusculas && reMinusculas && reNumereos && reEspeciais) {
+
+      const response = await usuServi.cadastrarEmpresa(empresa.value)
+
+      if (trataErro(response)) {
+        return
+      }
+
+      limparCadastroEmpresa()
+      $q.notify({ message: response, icon: 'done', color: 'positive' })
+      fecharJanelasCadastro()
+    }
+    return;
+  }
+ 
+  $q.notify({ message: 'As senhas não conferem', icon: 'error', color: 'negative' })
+  
+} 
+
+const btnCadastrarEmpresa = () => {  
   ehCadastroUsuario.value = false
-  usuario.value.id = '',
-    usuario.value.nome = '',
-    usuario.value.senha = '',
-    usuario.value.senha2
+  ehCadastroEmpresa.value = true  
 }
 
-const clear = () => {
+const cancelarCadastroUsuario = () => { 
+  fecharJanelasCadastro()
+  limparCadastroUsuario()
+}
+
+const cancelarCadastroEmpresa = () => { 
+  fecharJanelasCadastro()
+  limparCadastroEmpresa()
+}
+
+const fecharJanelasCadastro = () => {
+  ehCadastroUsuario.value = false
+  ehCadastroEmpresa.value = false
+}
+
+const limparID = () => {
   usuario.value.id = ''
+}
+
+const limparCadastroUsuario = () => {
+
+  usuario.value.id = '',
+  usuario.value.nome = '',
+  usuario.value.email = '',
+  usuario.value.cargoAtual = '',
+  usuario.value.cpf = '',
+  usuario.value.senha = '',
+  usuario.value.senha2 = ''
+}
+
+const limparCadastroEmpresa = () => {
+
+  empresa.value.razaoSocial= '',
+  empresa.value.nomeFantasia = '',
+  empresa.value.cnpj = '',
+  empresa.value.email= '',
+  empresa.value.segmento = '',
+  empresa.value.senha = '',
+  empresa.value.senha2 = ''
 }
 
 </script>

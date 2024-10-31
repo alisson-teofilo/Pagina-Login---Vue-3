@@ -7,6 +7,7 @@ export default function usuarioService () {
   const { validarToken } = useApiUsuario('login/validarToken')
   const { enviaEmail } = useApiUsuario('login/enviaEmail')
   const { cadastrarUsuario } = useApiUsuario('usuario/cadastrarUsuario')
+  const { cadastrarEmpresa } = useApiUsuario('empresa/cadastrarEmpresa')
   const { candidatarVaga } = useApiUsuario('vagas/candidatarVaga')
   const { listaUsurios } = useApiUsuario('usuario/listaUsuarios')
   const { buscarUsuaio } = useApiUsuario('usuario/buscarUsuario')
@@ -21,6 +22,7 @@ export default function usuarioService () {
     validarToken,
     enviaEmail,
     cadastrarUsuario,
+    cadastrarEmpresa,
     candidatarVaga,
     listaUsurios,
     buscarUsuaio,

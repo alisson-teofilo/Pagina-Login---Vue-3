@@ -99,7 +99,17 @@ export default function useApiUsuario(url) {
     } catch (error) {
       return error
     }
-  };
+  }; 
+
+  const cadastrarEmpresa = async (form) => {
+
+    try {
+      const { data } = await api.post(url,form);
+      return data
+    } catch (error) {
+      return error
+    }
+  }; 
 
   const enviaEmail = async (form) => {
 
@@ -182,6 +192,7 @@ export default function useApiUsuario(url) {
     validarToken,
     candidatarVaga,
     cadastrarUsuario,
+    cadastrarEmpresa,
     listaUsurios,
     buscarUsuaio,
     buscarEmpresa,
