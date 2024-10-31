@@ -83,6 +83,16 @@ export default function useApiUsuario(url) {
     }
   };
 
+  const editarCadastroEmpresa = async (form) => {
+
+    try {
+      const { data } = await api.put(url,form);
+      return data
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
   const efetuarLogin = async (form) => {
 
     try {
@@ -94,7 +104,7 @@ export default function useApiUsuario(url) {
 
   };
 
-  const buscarUsuarioPF = async (id) => {
+  const buscarUsuaio = async (id) => {
 
     try {
       const { data } = await api.get(`${url}/${id}`);
@@ -105,7 +115,7 @@ export default function useApiUsuario(url) {
 
   };
 
-  const buscarUsuarioPJ = async (cnpj) => {
+  const buscarEmpresa = async (cnpj) => {
 
     try {
       const { data } = await api.get(`${url}/${cnpj}`);
@@ -124,8 +134,9 @@ export default function useApiUsuario(url) {
     candidatarVaga,
     cadastrarUsuario,
     listaUsurios,
-    buscarUsuarioPF,
-    buscarUsuarioPJ
+    buscarUsuaio,
+    buscarEmpresa,
+    editarCadastroEmpresa
 
   };
 

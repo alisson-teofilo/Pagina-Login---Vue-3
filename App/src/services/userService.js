@@ -2,14 +2,15 @@ import useApiUsuario from 'src/composable/useApiUsuario'
 
 export default function usuarioService () {
   
-  const { atualizarCadastro } = useApiUsuario('usuarioPF/atualizarCadastro')
+  const { atualizarCadastro } = useApiUsuario('usuario/atualizarCadastro')
   const { efetuarLogin } = useApiUsuario('login/efetuarLogin')
-  const { enviaEmail } = useApiUsuario('eusuarioPF/nviaEmail')
-  const { cadastrarUsuario } = useApiUsuario('usuarioPF/cadastrarUsuario')
+  const { enviaEmail } = useApiUsuario('usuario/nviaEmail')
+  const { cadastrarUsuario } = useApiUsuario('usuario/cadastrarUsuario')
   const { candidatarVaga } = useApiUsuario('vagas/candidatarVaga')
-  const { listaUsurios } = useApiUsuario('usuarioPF/listaUsuarios')
-  const { buscarUsuarioPF } = useApiUsuario('usuarioPF/buscarUsuario')
-  const { buscarUsuarioPJ } = useApiUsuario('usuarioPJ/buscarUsuario')
+  const { listaUsurios } = useApiUsuario('usuario/listaUsuarios')
+  const { buscarUsuaio } = useApiUsuario('usuario/buscarUsuario')
+  const { buscarEmpresa } = useApiUsuario('empresa/buscarEmpresa')
+  const { editarCadastroEmpresa } = useApiUsuario('empresa/editarCadastroEmpresa')
   
 
   return {
@@ -19,8 +20,9 @@ export default function usuarioService () {
     cadastrarUsuario,
     candidatarVaga,
     listaUsurios,
-    buscarUsuarioPF,
-    buscarUsuarioPJ,
+    buscarUsuaio,
+    buscarEmpresa,
+    editarCadastroEmpresa
   };
 }
 

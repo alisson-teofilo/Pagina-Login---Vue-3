@@ -8,6 +8,7 @@ export default function vagasService () {
   const { editarVagas } = useApiVagas('vagas/editarVagas')
   const { listarCandidaturasByUsuaio } = useApiVagas('vagas/listarCandidaturasByUsuaio')
   const { deletarCandidatura } = useApiVagas('vagas/deletarCandidatura')
+  const { vagasPublicadas } = useApiVagas('vagas/vagasPublicadas')
 
   return {
     listarVagas,
@@ -15,7 +16,8 @@ export default function vagasService () {
     buscarVagas,
     editarVagas,
     listarCandidaturasByUsuaio,
-    deletarCandidatura
+    deletarCandidatura,
+    vagasPublicadas
   };
 }
 

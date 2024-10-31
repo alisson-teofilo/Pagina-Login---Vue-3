@@ -6,35 +6,16 @@
         
         <div class="row items-center col-12">
 
-          <div class="col-auto text-h6 text-black">
+          <div class="col-auto text-h6 text-black q-ml-sm">
             Link Vagas
           </div>
         
           <div class="row class_buscar_header items-center col-10 q-ml-md q-my-md">
 
-            <q-select
-              class="q-mx-md col-2"
-              dense
-              outlined
-              v-model="buscarVagas.plataforma"
-              :options="options"
-              label="VAGAS"
-              :color="white"
-            />
-            <q-input
-              class="col-4 q-pr-sm "
-              v-model="buscarVagas.descricao"
-              dense
-              placeholder="Buscar vagas"
-              outlined
-              color="white"
-            />
-            <q-btn
-              class="col-1"
-              outlined
-              color="primary"
-              icon="search"
-              type="submit"
+            <q-select class="q-mx-md col-2" dense outlined v-model="buscarVagas.plataforma" :options="options" label="VAGAS" />
+            <q-input class="col-4 q-pr-sm " v-model="buscarVagas.descricao" dense placeholder="Buscar vagas" outlined />
+
+            <q-btn  class="col-1" outlined color="primary" icon="search"  @click="btnBuscarVaga()"
             />
           </div>
 
@@ -45,21 +26,9 @@
 
     <q-page-container>
       <q-page>
-
-        <!-- CARD DE BUSCA 
-        <div class="q-px-md q-pt-lg col-5">
-          <q-form @submit="btnBuscarVaga">
-            <div class="row items-center justify-center">
-              <q-select class="q-mx-md col-2" dense outlined v-model="buscarVagas.plataforma" :options="options" label="VAGAS" />
-              <q-input class="col-4 q-pr-sm q-mt-md" v-model="buscarVagas.descricao" :rules="[val => !!val || 'Informe dados sobre a vaga']" lazy-rules="ondemand" dense placeholder="Buscar vagas" outlined />
-              <q-btn class="btnSubmitClass col-1 q-mt-md" outlined color="primary" icon="search" type="submit" />
-            </div>
-          </q-form>
-        </div>
-        -->
        
         <!-- DIVISÃO EM DOIS CARDS -->
-        <div class="q-ma-md row ">
+        <div class="row ">
 
           <!-- CARD DA ESQUERDA -->
           <div class="col-5" style="overflow-y: auto;">
@@ -142,7 +111,7 @@
                 </div>
               </q-card-section>
 
-              <q-card-actions align="right">
+              <q-card-actions class="q-ma-sm" align="right">
 
                 <q-btn v-if="vagaSelecionada.url" color="primary" outline label="Candidatar-se" :href="vagaSelecionada.url" target="_blank" />
 
@@ -159,10 +128,9 @@
 
     <!-- CARD DE CANDIDATURAS -->
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <div class="q-pa-md q-mt-lg">
-        <h6 v-if="isCandidato" class="text-subtitle1">Minhas Candidaturas</h6>
-        <h6 v-else class="text-subtitle1">Vagas Publicadas</h6>
-        
+      <div class="q-px-md">
+        <h6 v-if="isCandidato" class="text-subtitle1 q-mt-md">Minhas Candidaturas</h6>
+        <h6 v-else class="text-subtitle1 q-mt-md">Vagas Publicadas</h6>
         <div v-if="isCandidato">
           <div v-for="(vaga, index) in vagasCadastradas" :key="vaga.idVaga" class="q-mb-md">
 
@@ -186,8 +154,9 @@
         </div>
         
         <div v-else>
-          <div v-for="(vaga, index) in vagasPublicadas" :key="vaga.id" class="q-mb-md">
-            <q-item clickable @click="verDetalhesVaga(vaga.idVaga)">
+          <div v-for="(vaga, index) in vagasPublicadas" :key="vaga.idVaga" class="q-mb-md">
+
+            <q-item clickable @click="btnDialogEditarVaga(vaga.idVaga)">
               <q-item-section avatar>
                 <img :src="vaga.companyLogo || logoDefault" alt="Logo" style="width: 40px; height: 40px;">
               </q-item-section>
@@ -196,90 +165,234 @@
                 <q-item-label caption>{{ vaga.dataPublicacao }}</q-item-label>
               </q-item-section>
             </q-item>
+
             <q-separator v-if="index < vagasPublicadas.length - 1" />
           </div>
         </div>
+        
+        <div>
+          <q-btn
+            v-if="!isCandidato"
+            class="q-mt-md"
+            color="primary"
+            label="Cadastrar Vaga"
+            @click="btnDialogVagas()"
+          />
+        </div> 
       </div>
     </q-drawer>
+  
+    <!-- CARDS DE PERFIL  -->
+     <div v-if="isCandidato">
+      <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+        <div class="q-pa-md">
 
-    <!-- CARD DE PERFIL DE USUÁRIO -->
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-      <div class="q-pa-md">
-
-        <div class="q-mt-md" style="display: flex; flex-direction: column; align-items: center;">
-          <img :src="fotoPerfilUsuario" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
-          <q-item-label class="q-mt-lg text-h6">{{ userProfile.nome }}</q-item-label>
-          <q-item-label caption>{{ userProfile.email }}</q-item-label>
-          <q-item-label caption>{{ userProfile.cargoAtual }}</q-item-label>
-          <q-btn class="q-mt-md" color="primary" outline label="Ver Perfil" @click="verPerfil" />
+          <div class="q-mt-md" style="display: flex; flex-direction: column; align-items: center;">
+            <img :src="fotoPerfilUsuario" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+            <q-item-label class="q-mt-lg text-h6">{{ userProfile.nome }}</q-item-label>
+            <q-item-label caption>{{ userProfile.email }}</q-item-label>
+            <q-item-label caption>{{ userProfile.cargoAtual }}</q-item-label>
+            <q-btn class="q-mt-md" color="primary" outline label="Ver Perfil" @click="verPerfil" />
+          </div>
+          
         </div>
+      </q-drawer>
+    </div>
 
-        <q-btn
-          v-if="isEmpresa"
-          class="q-mt-md"
-          color="primary"
-          outline
-          label="Cadastrar Vaga"
-          @click="cadastrarVaga"
-        />
-      </div>
-    </q-drawer>
+    <div v-else>
+      <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+        <div class="q-pa-md">
+          <div class="q-mt-md" style="display: flex; flex-direction: column; align-items: center;">
+            <img :src="fotoPerfilEmpresa" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+            <q-item-label class="q-mt-lg text-h6">{{ empresaProfile.nomeFantasia }}</q-item-label>
+            <q-item-label caption>{{ empresaProfile.email }}</q-item-label>
+            <q-btn class="q-mt-md" color="primary" outline label="Ver Perfil" @click="verPerfilEmpresa" />
+          </div>
+          
+        </div>
+      </q-drawer>
+    </div>
 
     <!-- DIALOG DE PERFIL DO USUÁRIO -->
     <q-dialog v-model="dialogPerfil">
-    <q-card>
-      <q-card-section>
-          <div class="q-ml-md text-h6">Perfil</div>
-        </q-card-section>
+      <q-card>
+        <q-card-section>
+            <div class="q-ml-md text-h6">Editar Cadastro</div>
+          </q-card-section>
 
-        <q-separator />
-      <div>
-        <q-form @submit.prevent="btnAtualizarCadastroUsuario">
-          <q-card-section style="max-height: 50vh; min-width: 50vh;" class="q-mx-md q-mb-md row col-12">
-            <div class="q-ml-auto">
-              <q-btn class="q-mb-sm" flat dense icon="edit" title="Editar" color="grey" @click="editPerfil = !editPerfil"/>
-            </div>
+          <q-separator />
+        <div>
+          <q-form @submit.prevent="btnAtualizarCadastroUsuario">
+            <q-card-section style="max-height: 50vh; min-width: 50vh;" class="q-mx-md q-mb-md row col-12">
+              <div class="q-ml-auto">
+                <q-btn class="q-mb-sm" flat dense icon="edit" title="Editar" color="grey" @click="editPerfil = !editPerfil"/>
+              </div>
 
-            <q-input class="col-12" :disable="editPerfil" v-model="usuario.nome" :rules="[val => !!val || 'Informe um nome válido']" lazy-rules="ondemand" dense placeholder="Nome" outlined />
-            <q-input class="col-12" :disable="editPerfil" v-model="usuario.cargoAtual" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Cargo Atual" outlined />
-            <q-input class="col-12" :disable="editPerfil" v-model="usuario.email" type="email" lazy-rules="ondemand" dense placeholder="Email" outlined />
+              <q-input class="col-12" :disable="editPerfil" v-model="usuario.nome" :rules="[val => !!val || 'Informe um nome válido']" lazy-rules="ondemand" dense placeholder="Nome" outlined />
+              <q-input class="col-12" :disable="editPerfil" v-model="usuario.cargoAtual" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Cargo Atual" outlined />
+              <q-input class="col-12" :disable="editPerfil" v-model="usuario.email" type="email" lazy-rules="ondemand" dense placeholder="Email" outlined />
+              
+              <div class="row q-mt-lg col-12">
             
-            <div class="row q-mt-lg col-12">
-          
-              <div class="col-6">
-                <q-input :rules="[val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" dense v-model="usuario.senha" filled :type="isPwd ? 'password' : 'text'" hint="Min. 8 caracteres">
-                  <template v-slot:append>
+                <div class="col-6">
+                  <q-input :rules="[val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" dense v-model="usuario.senha" filled :type="isPwd ? 'password' : 'text'" hint="Min. 8 caracteres">
+                    <template v-slot:append>
+                        <q-icon
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                          />
+                    </template>
+                  </q-input>
+                </div>
+
+                <div class="col-6 q-pl-md">
+                  <q-input :rules="[ val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" class="col-6" dense v-model="usuario.confiSenha" filled :type="isPwd2 ? 'password' : 'text'" hint="Min. 8 caracteres">
+                    <template v-slot:append>
                       <q-icon
-                        :name="isPwd ? 'visibility_off' : 'visibility'"
-                        class="cursor-pointer"
-                        @click="isPwd = !isPwd"
+                          :name="isPwd2 ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd2 = !isPwd2"
                         />
-                  </template>
-                </q-input>
+                        </template>
+                    </q-input>
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="left" class="q-ml-md">
+              <q-btn flat label="Salvar" color="primary" type="submit"/>
+              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-form>
+        </div>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="dialogPerfilEmpresa">
+      <q-card>
+        <q-card-section>
+            <div class="q-ml-md text-h6">EDITAR PERFIL EMPRESA </div>
+          </q-card-section>
+
+          <q-separator />
+        <div>
+          <q-form @submit.prevent="btnAtualizarCadastroEmpresa">
+            <q-card-section style="max-height: 50vh; min-width: 50vh;" class="q-mx-md q-mb-md row col-12">
+              <div class="q-ml-auto">
+                <q-btn class="q-mb-sm" flat dense icon="edit" title="Editar" color="grey" @click="editPerfil = !editPerfil"/>
               </div>
 
-              <div class="col-6 q-pl-md">
-                <q-input :rules="[ val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" class="col-6" dense v-model="usuario.confiSenha" filled :type="isPwd2 ? 'password' : 'text'" hint="Min. 8 caracteres">
-                  <template v-slot:append>
-                    <q-icon
-                        :name="isPwd2 ? 'visibility_off' : 'visibility'"
-                        class="cursor-pointer"
-                        @click="isPwd2 = !isPwd2"
-                      />
-                      </template>
+              <q-input class="col-12" :disable="editPerfil" v-model="empresaProfile.nomeFantasia" :rules="[val => !!val || 'Informe um nome válido']" lazy-rules="ondemand" dense placeholder="Nome" outlined />
+              
+              <div class="row q-mt-lg col-12">
+            
+                <div class="col-6">
+                  <q-input :rules="[val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" dense v-model="empresaProfile.senha" filled :type="isPwd ? 'password' : 'text'" hint="Min. 8 caracteres">
+                    <template v-slot:append>
+                        <q-icon
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                          />
+                    </template>
                   </q-input>
+                </div>
+
+                <div class="col-6 q-pl-md">
+                  <q-input :rules="[ val => val.length > 7 || 'Mínimo 8 caracteres']" lazy-rules="ondemand" class="col-6" dense v-model="empresaProfile.confSenha" filled :type="isPwd2 ? 'password' : 'text'" hint="Min. 8 caracteres">
+                    <template v-slot:append>
+                      <q-icon
+                          :name="isPwd2 ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd2 = !isPwd2"
+                        />
+                        </template>
+                    </q-input>
+                </div>
               </div>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="left" class="q-ml-md">
+              <q-btn flat label="Salvar" color="primary" type="submit"/>
+              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-form>
+        </div>
+      </q-card>
+    </q-dialog>
+
+
+     <!-- CADASTRAR VAGA -->
+    <q-dialog v-model="dialogCadastrarVaga">
+      <q-card>
+        <q-card-section>
+            <div class="q-ml-md text-h6">Cadastrar Vagas</div>
+          </q-card-section>
+
+          <q-separator />
+        <div>
+          <q-form @submit.prevent="btnCadastrarVaga">
+            <q-card-section style="max-height: 50vh; min-width: 50vh;" class="q-mx-md q-mb-md row col-12">
+
+              <div class="q-mt-sm col-12">
+                <q-input class="col-12" readonly v-model="empresaProfile.nomeFantasia" :rules="[val => !!val || 'Informe um nome válido']" lazy-rules="ondemand" dense placeholder="Nome da Empresa" outlined />
+                <q-input class="col-12" v-model="cadastro.titulo" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Titulo" outlined />
+                <q-input class="col-12" v-model="cadastro.descricao" type="textarea" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Descrição" outlined />
+                <q-input class="col-12" v-model="cadastro.jobLevel"  :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Senioridade" outlined />
+                <q-input class="col-12" v-model="cadastro.valorMensal"  :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Salário" outlined />
+              </div>
+
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="left" class="q-ml-md">
+              <q-btn flat label="Salvar" color="primary" type="submit"/>
+              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-form>
+        </div>
+    </q-card>
+  </q-dialog>
+
+  <!-- EDITAR VAGA -->
+  <q-dialog v-model="dialogEditarVaga">
+      <q-card>
+        <q-card-section class="q-m row">
+            <div class="q-ml-md text-h6">Edita Vagas</div>
+            <div class="q-ml-auto q-mr-md">
+                <q-btn class="q-mb-sm" flat dense icon="edit" title="Detalhes" color="grey" @click="editVaga = !editVaga"/>
             </div>
           </q-card-section>
 
           <q-separator />
+        <div>
+          <q-form @submit.prevent="btnEditarVaga">
+            <q-card-section style="max-height: 50vh; min-width: 50vh;" class="q-mx-md q-mb-md row col-12">
 
-          <q-card-actions align="left" class="q-ml-md">
-            <q-btn flat label="Salvar" color="primary" type="submit"/>
-            <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-form>
-      </div>
+              <div class="q-mt-sm col-12">
+                <q-input  class="col-12" readonly v-model="empresaProfile.nomeFantasia" :rules="[val => !!val || 'Informe um nome válido']" lazy-rules="ondemand" dense placeholder="Nome da Empresa" outlined />
+                <q-input :disable="editVaga" class="col-12" v-model="cadastro.titulo" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Titulo" outlined />
+                <q-input :disable="editVaga" class="col-12" v-model="cadastro.descricao" type="textarea" :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Descrição" outlined />
+                <q-input :disable="editVaga" class="col-12" v-model="cadastro.jobLevel"  :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Senioridade" outlined />
+                <q-input :disable="editVaga" class="col-12" v-model="cadastro.valorMensal"  :rules="[val => !!val || 'Informe um cargo válido']" lazy-rules="ondemand" dense placeholder="Salário" outlined />
+              </div>
+
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="left" class="q-ml-md">
+              <q-btn flat label="Salvar" color="primary" type="submit"/>
+              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-form>
+        </div>
     </q-card>
   </q-dialog>
 
@@ -293,22 +406,27 @@ import vagasService from 'src/services/vagasService'
 import useApiUsuario from 'src/services/userService'
 import logoDefault from 'src/img/logo.png' 
 import fotoPerfilUsuario from 'src/img/Alisson.jpeg'
+import fotoPerfilEmpresa from 'src/img/google.png'
 import { useQuasar } from 'quasar'
 
 const isPwd = ref(true)
 const isPwd2 = ref(true)
 const $q = useQuasar() 
 const dialogPerfil = ref(false)
+const dialogPerfilEmpresa = ref(false)
+const dialogCadastrarVaga = ref(false)
 const vagasServi = vagasService();
 const usuarioServi = useApiUsuario();
 const listaVagas = ref([]);
 const loginId = ref(localStorage.getItem('loginId'));
-const isCandidato = ref (localStorage.getItem('loginId') != 14 ? true : false);
+const isCandidato = ref (localStorage.getItem('loginId').length != 14 ? true : false);
 const vagasCadastradas = ref([])
 const editPerfil = ref(true);
-const isEmpresa = ref(false)
+const editVaga = ref(true);
 const leftDrawerOpen = ref(false);
 const rightDrawerOpen = ref(false);
+const vagasPublicadas = ref([]);
+const dialogEditarVaga = ref(false)
 
 const userProfile = ref({
   nome: '',
@@ -318,6 +436,23 @@ const userProfile = ref({
   confiSenha: '',
   cpf: ''
 });
+
+const empresaProfile = ref({
+  nomeFantasiaome: '',
+  cnpj: '',
+  email: '',
+  senha: '',
+  confSenha: ''
+})
+
+const cadastro = ref ({
+  titulo: '',
+  descricao: '',
+  valorMensal:'',
+  companyName:'',
+  jobLevel: '',
+  cnpjEmpresa: ''
+})
 
 const usuario = ref({
   id: '',
@@ -330,9 +465,8 @@ const usuario = ref({
 })
 
 onBeforeMount(async () => {
-  await buscarDadosUsuarioLogado();
+  await carregarDadosUsuarioLogado();
   buscarVagasInternas();
-  buscarListaCandidatura();
 })
 
 const options = ref ([
@@ -372,14 +506,16 @@ const trataErro = (response) => {
 };
 
 // Funções PRE-CARREGAMENTO
-const buscarDadosUsuarioLogado = async () => {
+const carregarDadosUsuarioLogado = async () => {
 
-  if(loginId === 14) {
-    userProfile.value = await usuarioServi.buscarUsuarioPJ(loginId.value)
+  if(isCandidato.value) {
+
+    userProfile.value = await usuarioServi.buscarUsuaio(loginId.value) 
+    candidaturasByUsuario();
     return;
   }
-
-  userProfile.value = await usuarioServi.buscarUsuarioPF(loginId.value)
+  empresaProfile.value = await usuarioServi.buscarEmpresa(loginId.value)
+  buscarVagasPublicadas()
 }
 
 const buscarVagasInternas = async () => {
@@ -401,7 +537,6 @@ const btnBuscarVaga = async () => {
 // Funções dos cards de vagas
 const selecionarVaga = (idVagaSelecionada) => {
 
-  console.log(idVagaSelecionada)
   for (let i = 0; i < listaVagas.value.length; i++) {
     if (listaVagas.value[i].idVaga === idVagaSelecionada) {
       vagaSelecionada.value = listaVagas.value[i];
@@ -409,7 +544,6 @@ const selecionarVaga = (idVagaSelecionada) => {
     }
   }
 };
-
 
 const aplicarVaga = async (vagaId) => {
 
@@ -429,10 +563,10 @@ const aplicarVaga = async (vagaId) => {
     vagasCadastradas.value.push(vaga);
   } 
 
-  buscarListaCandidatura();
+  candidaturasByUsuario();
 }
 
-const buscarListaCandidatura = async () => {
+const candidaturasByUsuario = async () => {
   const response = await vagasServi.listarCandidaturasByUsuaio(userProfile.value.cpf)
   if (trataErro(response)) {
     console.error('Erro ao atualizar o cadastro');
@@ -447,6 +581,7 @@ const deletarCandidatura = async (rowid) => {
     console.error('Erro ao atualizar o cadastro');
     return;
   }
+  candidaturasByUsuario()
 }
 
 // Perfil de usuário
@@ -455,7 +590,11 @@ const verPerfil = () => {
   dialogPerfil.value = true
 }
 
-const btnAtualizarCadastroUsuario = async () => {
+const verPerfilEmpresa = () => {
+  dialogPerfilEmpresa.value = true
+}
+
+const btnAtualizarCadastroUsuario = async () => { 
 
   const response = await usuarioServi.atualizarCadastro(usuario.value);
   if (trataErro(response)) {
@@ -465,6 +604,87 @@ const btnAtualizarCadastroUsuario = async () => {
   $q.notify({message : response, color: 'positive'})
   dialogPerfil.value = false
 };
+
+const btnAtualizarCadastroEmpresa = async () => { 
+
+const response = await usuarioServi.editarCadastroEmpresa(empresaProfile.value);
+if (trataErro(response)) {
+  console.error('Erro ao atualizar o cadastro');
+  return;
+}
+$q.notify({message : response, color: 'positive'})
+dialogPerfilEmpresa.value = false
+};
+
+
+// Cadastrar Vagas
+const btnEditarVaga = async () => {
+
+  const response = await vagasServi.editarVagas({
+    cnpjEmpresa: empresaProfile.value.cnpj,
+    companyName: empresaProfile.value.nomeFantasia,
+    descricao: cadastro.value.descricao,
+    jobLevel: cadastro.value.jobLevel,
+    titulo: cadastro.value.titulo,
+    valorMensal: cadastro.value.valorMensal,
+    idVaga: cadastro.value.idVaga
+  })
+
+  if (trataErro(response)) {
+    console.error('Erro ao cadastrar vaga');
+    return;
+  }
+  $q.notify({message : "Alteração realizada com sucesso!", color: 'positive'})
+  dialogEditarVaga.value = false
+}
+
+const btnDialogEditarVaga = (idVaga) => {
+ 
+  for (let i = 0; i < listaVagas.value.length; i++) {
+    if (listaVagas.value[i].idVaga === idVaga) {
+      cadastro.value = listaVagas.value[i];
+      break;
+    }
+  }
+  dialogEditarVaga.value = true
+}
+
+const btnDialogVagas = () => {
+  dialogCadastrarVaga.value = true
+}
+
+const btnCadastrarVaga = async () => {
+  
+  const response = await vagasServi.cadastrarVagas({
+    cnpjEmpresa: empresaProfile.value.cnpj,
+    companyName: empresaProfile.value.nomeFantasia,
+    descricao: cadastro.value.descricao,
+    jobLevel: cadastro.value.jobLevel,
+    titulo: cadastro.value.titulo,
+    valorMensal: cadastro.value.valorMensal
+  })
+  
+  if (trataErro(response)) {
+    console.error('Erro ao cadastrar vaga');
+    return;
+  }
+
+  vagasPublicadas.value = response;
+
+  $q.notify({message : "Vaga cadastrada com sucesso!", color: 'positive'})
+  dialogCadastrarVaga.value = false
+}
+
+const buscarVagasPublicadas = async () => {
+
+  const response = await vagasServi.vagasPublicadas(empresaProfile.value.cnpj)
+  if (trataErro(response)) {
+    console.error('Erro ao buscar vagas poublicadas');
+    return;
+  }
+
+  vagasPublicadas.value = response;
+}
 
 // Funções úteis
 function formatarData(data) {

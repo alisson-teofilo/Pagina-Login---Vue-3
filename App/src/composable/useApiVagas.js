@@ -43,6 +43,26 @@ export default function useApiVagas(url) {
     }
   };
 
+  const vagasPublicadas = async (cnpj) => { 
+    const errors = [];
+    let body = {};
+
+    try {
+      const response = await api.get(`${url}/${cnpj}`, {
+        headers : { Authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        withCredentials: false,
+        timeout: 10000,
+          }
+        });
+        body = response.data;
+        return body;
+    } catch (error) {
+      errors.values = error;
+      return errors;
+    }
+  };
+
+
   const listarVagas = async () => { 
     const errors = [];
     let body = {};
@@ -75,9 +95,7 @@ export default function useApiVagas(url) {
   const cadastrarVagas = async (form) => {
 
     try {
-      const { data } = await api.post(url,form, {
-        local
-      });
+      const { data } = await api.post(url,form);
       return data
     } catch (error) {
       throw new Error(error);
@@ -87,9 +105,7 @@ export default function useApiVagas(url) {
   const editarVagas = async (form) => {
 
     try {
-      const { data } = await api.put(url,form, {
-        local
-      });
+      const { data } = await api.put(url,form);
       return data
     } catch (error) {
       throw new Error(error);
@@ -99,13 +115,12 @@ export default function useApiVagas(url) {
   const deletarCandidatura = async (form) => {
 
     try {
-      const { data } = await api.post(url, form);
+      const { data } = await api.put(url, form);
       return data
     } catch (error) {
       throw new Error(error);
     }
   };
-
 
   return {
 
@@ -114,8 +129,8 @@ export default function useApiVagas(url) {
     cadastrarVagas,
     editarVagas,
     listarCandidaturasByUsuaio,
-    deletarCandidatura
-
+    deletarCandidatura,
+    vagasPublicadas
   };
 
 }
